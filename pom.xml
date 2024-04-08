@@ -394,7 +394,14 @@
         <artifactId>jaxb-maven-plugin</artifactId>
         <version>4.0.3</version>
         <configuration>
+          <!-- https://github.com/highsource/jaxb-tools/wiki/Controlling-the-Output -->
+          <enableIntrospection>true</enableIntrospection>
           <generatePackage>com.github.jinahya.spdx.license.bind</generatePackage>
+          <markGenerated>false</markGenerated>
+          <noFileHeader>true</noFileHeader>
+          <packageLevelAnnotations>false</packageLevelAnnotations>
+          <readOnly>true</readOnly>
+          <removeOldOutput>true</removeOldOutput>
           <schemaDirectory>src/main/resources-spdx-license-list-xml/schema</schemaDirectory>
           <schemaIncludes>
             <include>*.xsd</include>
