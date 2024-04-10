@@ -4,3 +4,6 @@
 [submodule ".idea/codeStyles"]
 	path = .idea/codeStyles
 	url = git@github.com:onacit/dot-idea-codestyles.git
+[submodule "src/main/resources-spdx-license-data"]
+	path = src/main/resources-spdx-license-data
+	url = git@github.com:spdx/license-list-data.git

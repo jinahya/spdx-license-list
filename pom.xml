@@ -83,6 +83,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.17.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>4.0.5</version>
@@ -94,14 +100,61 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.json.bind</groupId>
+      <artifactId>jakarta.json.bind-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.25.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- jakarta.json.json-bind implementation-->
+      <groupId>org.eclipse</groupId>
+      <artifactId>yasson</artifactId>
+      <version>3.0.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- required by hibernate-validator -->
+      <groupId>org.glassfish.expressly</groupId>
+      <artifactId>expressly</artifactId>
+      <version>5.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- jakarta.validation.validation-api implementation -->
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>8.0.1.Final</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-junit5</artifactId>
+      <version>4.0.3.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -190,11 +243,6 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.5.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
           <version>2.16.2</version>
         </plugin>
@@ -279,11 +327,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-<!--          <archive>-->
-<!--            <manifestEntries>-->
-<!--              <Automatic-Module-Name>com.github.jinahya.spdx.license.list</Automatic-Module-Name>-->
-<!--            </manifestEntries>-->
-<!--          </archive>-->
+          <!--          <archive>-->
+          <!--            <manifestEntries>-->
+          <!--              <Automatic-Module-Name>com.github.jinahya.spdx.license.list</Automatic-Module-Name>-->
+          <!--            </manifestEntries>-->
+          <!--          </archive>-->
         </configuration>
       </plugin>
       <plugin>
@@ -346,6 +394,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>add-resource</id>
@@ -357,6 +406,25 @@
               <resources>
                 <resource>
                   <directory>${project.basedir}/src/main/resources-spdx-license-list-xml/src</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-resource-data-json</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/main/resources-spdx-license-data</directory>
+                  <includes>
+                    <include>json</include>
+                    <!--                    <include>json/exceptions.json</include>-->
+                    <!--                    <include>json/licenses.json</include>-->
+                  </includes>
                 </resource>
               </resources>
             </configuration>
