@@ -32,9 +32,9 @@ public final class _Exceptions
 
     // -----------------------------------------------------------------------------------------------------------------
     public static _Exceptions getInstance() {
+        final var resource = _Exceptions.class.getResource(NAME);
+        assert resource != null;
         try {
-            final var resource = _Exceptions.class.getResource(NAME);
-            assert resource != null;
             return ObjectIoUtils.read(new File(resource.toURI()));
         } catch (final Exception e) {
             throw new RuntimeException("failed to load resource", e);

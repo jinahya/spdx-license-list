@@ -32,8 +32,10 @@ public final class Licenses
 
     // -----------------------------------------------------------------------------------------------------------------
     public static Licenses getInstance() {
+        final var resource = Licenses.class.getResource(NAME);
+        assert resource != null;
         try {
-            return ObjectIoUtils.read(new File(Licenses.class.getResource(NAME).toURI()));
+            return ObjectIoUtils.read(new File(resource.toURI()));
         } catch (final Exception e) {
             throw new RuntimeException("failed to load resource", e);
         }
