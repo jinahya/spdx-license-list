@@ -1,9 +1,6 @@
-[submodule "src/main/resources-spdx-license-list-xml"]
-	path = src/main/resources-spdx-license-list-xml
-	url = git@github.com:spdx/license-list-XML.git
 [submodule ".idea/codeStyles"]
 	path = .idea/codeStyles
 	url = git@github.com:onacit/dot-idea-codestyles.git
-[submodule "src/main/resources-spdx-license-data"]
-	path = src/main/resources-spdx-license-data
+[submodule "src/test/resources-spdx-license-data"]
+	path = src/test/resources-spdx-license-data
 	url = git@github.com:spdx/license-list-data.git

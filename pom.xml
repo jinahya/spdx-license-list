@@ -89,10 +89,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>4.0.5</version>
-      <scope>test</scope>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.17.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.activation</groupId>
@@ -110,16 +110,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.json.bind</groupId>
-      <artifactId>jakarta.json.bind-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
       <scope>provided</scope>
@@ -128,13 +118,6 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.25.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- jakarta.json.json-bind implementation-->
-      <groupId>org.eclipse</groupId>
-      <artifactId>yasson</artifactId>
-      <version>3.0.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -260,54 +243,6 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>generate-license-list</id>
-            <phase>generate-resources</phase>
-            <configuration>
-              <target>
-                <fileset id="license.fileset" dir="${project.basedir}/src/main/resources-spdx-license-list-xml/src"
-                         includes="*.xml"/>
-                <pathconvert pathsep="${line.separator}" property="license.fileset.property" refid="license.fileset">
-                  <!-- https://stackoverflow.com/a/1456898/330457 -->
-                  <mapper>
-                    <flattenmapper/>
-                  </mapper>
-                </pathconvert>
-                <echo file="${project.basedir}/src/main/resources/com/github/jinahya/spdx/license/licenses.list">${license.fileset.property}</echo>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>generate-exception-list</id>
-            <phase>generate-resources</phase>
-            <configuration>
-              <target>
-                <fileset id="exception.fileset"
-                         dir="${project.basedir}/src/main/resources-spdx-license-list-xml/src/exceptions"
-                         includes="*.xml"/>
-                <pathconvert pathsep="${line.separator}" property="exception.fileset.property"
-                             refid="exception.fileset">
-                  <!-- https://stackoverflow.com/a/1456898/330457 -->
-                  <mapper>
-                    <flattenmapper/>
-                  </mapper>
-                </pathconvert>
-                <echo file="${project.basedir}/src/main/resources/com/github/jinahya/spdx/license/exceptions.list">${exception.fileset.property}</echo>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -397,33 +332,17 @@
         <version>3.5.0</version>
         <executions>
           <execution>
-            <id>add-resource</id>
-            <phase>generate-resources</phase>
+            <id>add-test-resource-data-json</id>
+            <phase>generate-test-resources</phase> <!-- default -->
             <goals>
-              <goal>add-resource</goal>
+              <goal>add-test-resource</goal>
             </goals>
             <configuration>
               <resources>
                 <resource>
-                  <directory>${project.basedir}/src/main/resources-spdx-license-list-xml/src</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-resource-data-json</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>add-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>src/main/resources-spdx-license-data</directory>
+                  <directory>src/test/resources-spdx-license-data</directory>
                   <includes>
-                    <include>json</include>
-                    <!--                    <include>json/exceptions.json</include>-->
-                    <!--                    <include>json/licenses.json</include>-->
+                    <include>json/**</include>
                   </includes>
                 </resource>
               </resources>
@@ -453,32 +372,6 @@
             <id>default-report</id>
             <goals>
               <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin><!-- https://github.com/highsource/jaxb-tools -->
-        <groupId>org.jvnet.jaxb</groupId>
-        <artifactId>jaxb-maven-plugin</artifactId>
-        <version>4.0.3</version>
-        <configuration>
-          <!-- https://github.com/highsource/jaxb-tools/wiki/Controlling-the-Output -->
-          <enableIntrospection>true</enableIntrospection>
-          <generatePackage>com.github.jinahya.spdx.license.bind</generatePackage>
-          <markGenerated>false</markGenerated>
-          <noFileHeader>true</noFileHeader>
-          <packageLevelAnnotations>false</packageLevelAnnotations>
-          <readOnly>true</readOnly>
-          <removeOldOutput>true</removeOldOutput>
-          <schemaDirectory>src/main/resources-spdx-license-list-xml/schema</schemaDirectory>
-          <schemaIncludes>
-            <include>*.xsd</include>
-          </schemaIncludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
             </goals>
           </execution>
         </executions>
