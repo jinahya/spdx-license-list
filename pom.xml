@@ -340,7 +340,7 @@
             <configuration>
               <resources>
                 <resource>
-                  <directory>src/test/resources-spdx-license-data</directory>
+                  <directory>${project.basedir}/src/test/resources-spdx-license-data</directory>
                   <includes>
                     <include>json/**</include>
                   </includes>
