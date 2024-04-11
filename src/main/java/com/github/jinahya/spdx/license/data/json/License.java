@@ -1,9 +1,5 @@
 package com.github.jinahya.spdx.license.data.json;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 import java.io.Serializable;
@@ -13,7 +9,7 @@ import java.util.List;
 
 @Getter
 @EqualsAndHashCode
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class License
         implements Serializable {
@@ -36,59 +32,43 @@ public class License
 
         private String url;
 
-        @JsonProperty("isValid")
-        private Boolean valid;
+        private Boolean isValid;
 
-        @JsonProperty("isLive")
-        private Boolean live;
+        private Boolean isLive;
 
         private OffsetDateTime timestamp;
 
-        @JsonProperty("isWayBackLink")
-        private Boolean wayBackLink;
+        private Boolean isWayBackLink;
 
-        @PositiveOrZero
-        @NotNull
         private Integer order;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @NotBlank
     private String reference;
 
-    @NotNull
-    @JsonProperty("isDeprecatedLicenseId")
-    private Boolean deprecatedLicenseId;
+    private Boolean isDeprecatedLicenseId;
 
-    @NotBlank
     private String detailsUrl;
 
-    @NotNull
     private Integer referenceNumber;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String licenseId;
 
-    private List<@NotNull URL> seeAlso;
+    private List<URL> seeAlso;
 
-    @NotNull
-    @JsonProperty("isOsiApproved")
-    private Boolean osiApproved;
+    private Boolean isOsiApproved;
 
     // -----------------------------------------------------------------------------------------------------------------
     private String licenseText;
 
-    @JsonProperty("crossRef")
-    private List<CrossRef> crossRefs;
+    private List<CrossRef> crossRef;
 
     private String licenseTextHtml;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @JsonProperty("isFsfLibre")
-    private Boolean fsfLibre;
+    private Boolean isFsfLibre;
 
     private String standardLicenseTemplate;
 

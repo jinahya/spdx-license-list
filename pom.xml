@@ -32,8 +32,8 @@
     <url>https://github.com/jinahya/${project.artifactId}/issues</url>
   </issueManagement>
   <ciManagement>
-    <system>Travis CI</system>
-    <url>https://travis-ci.org/jinahya/${project.artifactId}</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/jinahya/spdx-licenses/actions/workflows/maven.yml</url>
   </ciManagement>
 
   <properties>
@@ -57,6 +57,14 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <!-- https://search.maven.org/artifact/com.fasterxml.jackson/jackson-bom -->
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.17.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency><!-- https://search.maven.org/artifact/jakarta.platform/jakarta.jakartaee-bom -->
         <groupId>jakarta.platform</groupId>
         <artifactId>jakarta.jakartaee-bom</artifactId>
@@ -84,19 +92,17 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.17.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.17.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.activation</groupId>
-      <artifactId>jakarta.activation-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -110,34 +116,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.validation</groupId>
-      <artifactId>jakarta.validation-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.25.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- required by hibernate-validator -->
-      <groupId>org.glassfish.expressly</groupId>
-      <artifactId>expressly</artifactId>
-      <version>5.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- jakarta.validation.validation-api implementation -->
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>8.0.1.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-junit5</artifactId>
-      <version>4.0.3.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -279,7 +260,7 @@
             <configuration>
               <skip>true</skip>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
             <goals>

@@ -1,10 +1,6 @@
 package com.github.jinahya.spdx.license.data.json;
 
 import com.github.jinahya.spdx.license.util.ObjectIoUtils;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
 import java.io.File;
@@ -18,9 +14,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Getter
 @EqualsAndHashCode
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class _Exceptions
         implements Serializable {
@@ -31,14 +26,23 @@ public final class _Exceptions
     static final String NAME = "exceptions.bin";
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static _Exceptions getInstance() {
-        final var resource = _Exceptions.class.getResource(NAME);
-        assert resource != null;
-        try {
-            return ObjectIoUtils.read(new File(resource.toURI()));
-        } catch (final Exception e) {
-            throw new RuntimeException("failed to load resource", e);
+    private static final class InstanceHolder {
+
+        private static final _Exceptions INSTANCE;
+
+        static {
+            final var resource = _Exceptions.class.getResource(NAME);
+            assert resource != null;
+            try {
+                INSTANCE = ObjectIoUtils.read(new File(resource.toURI()));
+            } catch (final Exception e) {
+                throw new RuntimeException("failed to load resource", e);
+            }
         }
+    }
+
+    public static _Exceptions getInstance() {
+        return InstanceHolder.INSTANCE;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -46,29 +50,44 @@ public final class _Exceptions
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject();
         assert exceptions != null;
-        map = exceptions.stream().collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+        map();
     }
 
     // -------------------------------------------------------------------------------------------------------- licenses
+    private void map() {
+        map = exceptions.stream().collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+    }
+
+    public Map<String, _Exception> getExceptions() {
+        if (map == null) {
+            map();
+        }
+        return map;
+    }
+
     public _Exception getException(final String id) {
         Objects.requireNonNull(id, "id is null");
-        return map.get(id);
+        return getExceptions().get(id);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @NotEmpty
+    @Setter(AccessLevel.NONE)
+    @Getter
     private String licenseListVersion;
 
-    @NotNull
     @ToString.Exclude
-    private @NotEmpty List<@Valid @NotNull _Exception> exceptions;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private List<_Exception> exceptions;
 
-    @PastOrPresent
-    @NotNull
+    @Setter(AccessLevel.NONE)
+    @Getter
     private LocalDate releaseDate;
 
     // -----------------------------------------------------------------------------------------------------------------
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private transient Map<String, _Exception> map;
 }

@@ -1,10 +1,6 @@
 package com.github.jinahya.spdx.license.data.json;
 
 import com.github.jinahya.spdx.license.util.ObjectIoUtils;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
 import java.io.File;
@@ -18,9 +14,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Getter
 @EqualsAndHashCode
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Licenses
         implements Serializable {
@@ -31,14 +26,24 @@ public final class Licenses
     static final String NAME = "licenses.bin";
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static Licenses getInstance() {
-        final var resource = Licenses.class.getResource(NAME);
-        assert resource != null;
-        try {
-            return ObjectIoUtils.read(new File(resource.toURI()));
-        } catch (final Exception e) {
-            throw new RuntimeException("failed to load resource", e);
+    private static final class InstanceHolder {
+
+        private static final Licenses INSTANCE;
+
+        static {
+            final var resource = Licenses.class.getResource(NAME);
+            assert resource != null;
+            try {
+                INSTANCE = ObjectIoUtils.read(new File(resource.toURI()));
+            } catch (final Exception e) {
+                throw new InstantiationError("failed to load resource for `" + NAME + "'");
+            }
         }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static Licenses getInstance() {
+        return InstanceHolder.INSTANCE;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -46,29 +51,55 @@ public final class Licenses
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject();
         assert licenses != null;
-        map = licenses.stream().collect(Collectors.toMap(License::getLicenseId, Function.identity()));
+        map();
     }
 
     // -------------------------------------------------------------------------------------------------------- licenses
+    private void map() {
+        map = licenses.stream().collect(Collectors.toMap(License::getLicenseId, Function.identity()));
+    }
+
+    /**
+     * Returns an unmodifiable list of loaded licenses.
+     *
+     * @return an unmodifiable list of loaded licenses.
+     */
+    public Map<String, License> getLicenses() {
+        if (map == null) {
+            map();
+        }
+        return map;
+    }
+
+    /**
+     * Returns the license associated with specified license id.
+     *
+     * @param id the license id.
+     * @return the license associated with {@code id}; {@code null} when no license matches.
+     */
     public License getLicense(final String id) {
         Objects.requireNonNull(id, "id is null");
-        return map.get(id);
+        return getLicenses().get(id);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @NotEmpty
+    @Setter(AccessLevel.NONE)
+    @Getter
     private String licenseListVersion;
 
-    @NotNull
     @ToString.Exclude
-    private @NotEmpty List<@Valid @NotNull License> licenses;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private List<License> licenses;
 
-    @PastOrPresent
-    @NotNull
+    @Setter(AccessLevel.NONE)
+    @Getter
     private LocalDate releaseDate;
 
     // -----------------------------------------------------------------------------------------------------------------
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private transient Map<String, License> map;
 }
