@@ -73,39 +73,31 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency><!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-bom</artifactId>
-        <!--        <version>2.1.0-alpha1</version>-->
-        <version>2.0.12</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.3</version>
+      <version>1.5.4</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--      <artifactId>jackson-annotations</artifactId>-->
-<!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--      <artifactId>jackson-annotations</artifactId>-->
+    <!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-<!--      <scope>provided</scope>-->
+      <!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-<!--      <scope>provided</scope>-->
+      <!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -145,7 +137,8 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
+      <version>2.0.12</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -263,7 +256,7 @@
             <configuration>
               <skip>true</skip>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
             <goals>
@@ -295,6 +288,20 @@
                 </requireMavenVersion>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -368,7 +375,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.3.1</version>
+        <version>4.8.4.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
