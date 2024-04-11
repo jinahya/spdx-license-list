@@ -16,14 +16,13 @@ import java.util.stream.Collectors;
 
 @EqualsAndHashCode
 @ToString(callSuper = true)
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Licenses
         implements Serializable {
 
     private static final long serialVersionUID = 1668175366953366612L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final String NAME = "licenses.bin";
+    static final String RESOURCE_NAME = "licenses.bin";
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final class InstanceHolder {
@@ -31,19 +30,30 @@ public final class Licenses
         private static final Licenses INSTANCE;
 
         static {
-            final var resource = Licenses.class.getResource(NAME);
+            final var resource = Licenses.class.getResource(RESOURCE_NAME);
             assert resource != null;
             try {
                 INSTANCE = ObjectIoUtils.read(new File(resource.toURI()));
             } catch (final Exception e) {
-                throw new InstantiationError("failed to load resource for `" + NAME + "'");
+                throw new InstantiationError("failed to load resource for `" + RESOURCE_NAME + "'");
             }
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the instance of this class.
+     *
+     * @return the instance of this class.
+     */
     public static Licenses getInstance() {
         return InstanceHolder.INSTANCE;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private Licenses() {
+        super();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -54,15 +64,22 @@ public final class Licenses
         map();
     }
 
-    // -------------------------------------------------------------------------------------------------------- licenses
     private void map() {
         map = licenses.stream().collect(Collectors.toMap(License::getLicenseId, Function.identity()));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public String getLicenseListVersion() {
+        return licenseListVersion;
+    }
+
+    // -------------------------------------------------------------------------------------------------------- licenses
+
     /**
-     * Returns an unmodifiable list of loaded licenses.
+     * Returns an unmodifiable map of license-ids and licenses.
      *
-     * @return an unmodifiable list of loaded licenses.
+     * @return an unmodifiable map of license-ids and licenses.
      */
     public Map<String, License> getLicenses() {
         if (map == null) {
@@ -72,28 +89,29 @@ public final class Licenses
     }
 
     /**
-     * Returns the license associated with specified license id.
+     * Returns the license associated with specified license-id.
      *
-     * @param id the license id.
-     * @return the license associated with {@code id}; {@code null} when no license matches.
+     * @param licenseId the license-id.
+     * @return the license associated with {@code licenseId}; {@code null} when no license matches.
      */
-    public License getLicense(final String id) {
-        Objects.requireNonNull(id, "id is null");
-        return getLicenses().get(id);
+    public License getLicense(final String licenseId) {
+        Objects.requireNonNull(licenseId, "licenseId is null");
+        return getLicenses().get(licenseId);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Setter(AccessLevel.NONE)
-    @Getter
+
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     private String licenseListVersion;
 
     @ToString.Exclude
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
     private List<License> licenses;
 
     @Setter(AccessLevel.NONE)
-    @Getter
     private LocalDate releaseDate;
 
     // -----------------------------------------------------------------------------------------------------------------

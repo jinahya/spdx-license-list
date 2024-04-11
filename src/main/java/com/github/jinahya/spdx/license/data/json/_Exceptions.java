@@ -23,7 +23,7 @@ public final class _Exceptions
     private static final long serialVersionUID = -7925674913511699783L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final String NAME = "exceptions.bin";
+    static final String RESOURCE_NAME = "exceptions.bin";
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final class InstanceHolder {
@@ -31,7 +31,7 @@ public final class _Exceptions
         private static final _Exceptions INSTANCE;
 
         static {
-            final var resource = _Exceptions.class.getResource(NAME);
+            final var resource = _Exceptions.class.getResource(RESOURCE_NAME);
             assert resource != null;
             try {
                 INSTANCE = ObjectIoUtils.read(new File(resource.toURI()));
@@ -53,11 +53,17 @@ public final class _Exceptions
         map();
     }
 
-    // -------------------------------------------------------------------------------------------------------- licenses
     private void map() {
         map = exceptions.stream().collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public String getLicenseListVersion() {
+        return licenseListVersion;
+    }
+
+    // -------------------------------------------------------------------------------------------------------- licenses
     public Map<String, _Exception> getExceptions() {
         if (map == null) {
             map();
@@ -65,9 +71,14 @@ public final class _Exceptions
         return map;
     }
 
-    public _Exception getException(final String id) {
-        Objects.requireNonNull(id, "id is null");
-        return getExceptions().get(id);
+    public _Exception getException(final String licenseExceptionId) {
+        Objects.requireNonNull(licenseExceptionId, "licenseExceptionId is null");
+        return getExceptions().get(licenseExceptionId);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public LocalDate getReleaseDate() {
+        return releaseDate;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

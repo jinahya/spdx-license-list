@@ -1,5 +1,6 @@
 package com.github.jinahya.spdx.license.data.json;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jinahya.spdx.license.util.ObjectIoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,13 @@ class _ExceptionsTest {
         rootDirectory.toFile().mkdirs();
         // -------------------------------------------------------------------------------------------------------------
         final var mapper = new ObjectMapper().findAndRegisterModules();
+        // https://stackoverflow.com/a/7108530/330457
+        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
+                                     .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                                     .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                                     .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                                     .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+        // -------------------------------------------------------------------------------------------------------------
         final _Exceptions exceptions;
         {
             final var name = "/json/exceptions.json";
@@ -37,7 +45,7 @@ class _ExceptionsTest {
                         .isNotNull();
                 exceptions = mapper.reader().readValue(resource, _Exceptions.class);
                 {
-                    final var file = rootDirectory.resolve(_Exceptions.NAME).toFile();
+                    final var file = rootDirectory.resolve(_Exceptions.RESOURCE_NAME).toFile();
                     ObjectIoUtils.write(file, exceptions);
                 }
             }
