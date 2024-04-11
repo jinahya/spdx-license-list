@@ -121,12 +121,22 @@ public class License
         return licenseText;
     }
 
+    /**
+     * Returns the value of {@code $.crossRef}.
+     *
+     * @return the value of {@code $.crossRef}.
+     */
     public List<CrossRef> getCrossRef() {
         return Optional.ofNullable(crossRef)
                 .map(Collections::unmodifiableList)
                 .orElse(null);
     }
 
+    /**
+     * Returns the value of {@code $.licenseTextHtml}.
+     *
+     * @return the value of {@code $.licenseTextHtml}.
+     */
     public String getLicenseTextHtml() {
         return licenseTextHtml;
     }
