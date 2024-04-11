@@ -1,8 +1,5 @@
 package com.github.jinahya.spdx.license.data.json;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serializable;
@@ -11,7 +8,7 @@ import java.util.List;
 
 @Getter
 @EqualsAndHashCode
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class _Exception
         implements Serializable {
@@ -19,26 +16,19 @@ public class _Exception
     private static final long serialVersionUID = 8502499247921432315L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    @NotBlank
     private String reference;
 
-    @NotNull
-    @JsonProperty("isDeprecatedLicenseId")
-    private Boolean deprecatedLicenseId;
+    private Boolean isDeprecatedLicenseId;
 
-    @NotBlank
     private String detailsUrl;
 
-    @NotNull
     private Integer referenceNumber;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String licenseExceptionId;
 
-    private List<@NotNull URL> seeAlso;
+    private List<URL> seeAlso;
 
     // -----------------------------------------------------------------------------------------------------------------
     private String licenseExceptionText;
