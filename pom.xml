@@ -57,8 +57,7 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <!-- https://search.maven.org/artifact/com.fasterxml.jackson/jackson-bom -->
+      <dependency><!-- https://search.maven.org/artifact/com.fasterxml.jackson/jackson-bom -->
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>2.17.0</version>
@@ -69,7 +68,6 @@
         <groupId>jakarta.platform</groupId>
         <artifactId>jakarta.jakartaee-bom</artifactId>
         <version>11.0.0-M1</version>
-        <!--        <version>10.0.0</version>-->
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -82,22 +80,14 @@
       <version>1.5.4</version>
       <scope>test</scope>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>com.fasterxml.jackson.core</groupId>-->
-    <!--      <artifactId>jackson-annotations</artifactId>-->
-    <!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
-    <!--      <scope>test</scope>-->
-    <!--    </dependency>-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -157,37 +147,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.3</version>
-          <configuration>
-            <additionalOptions>
-              <additionalOption>-Xdoclint:${doclint}</additionalOption>
-            </additionalOptions>
-            <links>
-              <link>https://javadoc.io/doc/jakarta.platform/jakarta.jakartaee-api/latest</link>
-            </links>
-            <release>${maven.compiler.testRelease}</release>
-            <tags>
-              <tag>
-                <name>apiNote</name>
-                <placement>a</placement>
-                <head>API Note:</head>
-              </tag>
-              <tag>
-                <name>implSpec</name>
-                <placement>a</placement>
-                <head>Implementation Requirements:</head>
-              </tag>
-              <tag>
-                <name>implNote</name>
-                <placement>a</placement>
-                <head>Implementation Note:</head>
-              </tag>
-            </tags>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.3.0</version>
         </plugin>
@@ -199,7 +158,8 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M13</version>
+<!--          <version>4.0.0-M13</version>-->
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -238,13 +198,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <!--          <archive>-->
-          <!--            <manifestEntries>-->
-          <!--              <Automatic-Module-Name>com.github.jinahya.spdx.license.list</Automatic-Module-Name>-->
-          <!--            </manifestEntries>-->
-          <!--          </archive>-->
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -385,6 +338,31 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <additionalOptions>
+<!--            <additionalOption>-Xdoclint:${doclint}</additionalOption>-->
+          </additionalOptions>
+<!--          <source>${maven.compiler.release}</source>-->
+<!--          <release>${maven.compiler.testRelease}</release>-->
+          <tags>
+            <tag>
+              <name>apiNote</name>
+              <placement>a</placement>
+              <head>API Note:</head>
+            </tag>
+            <tag>
+              <name>implSpec</name>
+              <placement>a</placement>
+              <head>Implementation Requirements:</head>
+            </tag>
+            <tag>
+              <name>implNote</name>
+              <placement>a</placement>
+              <head>Implementation Note:</head>
+            </tag>
+          </tags>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -397,7 +375,7 @@
         <version>3.21.2</version>
         <configuration>
           <!-- Unsupported targetJdk value '21'. -->
-          <skip>true</skip>
+          <!--          <skip>true</skip>-->
         </configuration>
       </plugin>
       <plugin>
