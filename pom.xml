@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>spdx-licenses</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
@@ -25,7 +25,7 @@
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
     <url>https://github.com:jinahya/${project.artifactId}</url>
-    <tag>0.0.2</tag>
+    <tag>0.0.3</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
@@ -57,8 +57,7 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <!-- https://search.maven.org/artifact/com.fasterxml.jackson/jackson-bom -->
+      <dependency><!-- https://search.maven.org/artifact/com.fasterxml.jackson/jackson-bom -->
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>2.17.0</version>
@@ -69,15 +68,6 @@
         <groupId>jakarta.platform</groupId>
         <artifactId>jakarta.jakartaee-bom</artifactId>
         <version>11.0.0-M1</version>
-        <!--        <version>10.0.0</version>-->
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency><!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-bom</artifactId>
-        <!--        <version>2.1.0-alpha1</version>-->
-        <version>2.0.12</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -87,25 +77,17 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.3</version>
+      <version>1.5.4</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--      <artifactId>jackson-annotations</artifactId>-->
-<!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-<!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-<!--      <scope>provided</scope>-->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -145,7 +127,8 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
+      <version>2.0.12</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -164,37 +147,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.3</version>
-          <configuration>
-            <additionalOptions>
-              <additionalOption>-Xdoclint:${doclint}</additionalOption>
-            </additionalOptions>
-            <links>
-              <link>https://javadoc.io/doc/jakarta.platform/jakarta.jakartaee-api/latest</link>
-            </links>
-            <release>${maven.compiler.testRelease}</release>
-            <tags>
-              <tag>
-                <name>apiNote</name>
-                <placement>a</placement>
-                <head>API Note:</head>
-              </tag>
-              <tag>
-                <name>implSpec</name>
-                <placement>a</placement>
-                <head>Implementation Requirements:</head>
-              </tag>
-              <tag>
-                <name>implNote</name>
-                <placement>a</placement>
-                <head>Implementation Note:</head>
-              </tag>
-            </tags>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.3.0</version>
         </plugin>
@@ -206,7 +158,8 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M13</version>
+<!--          <version>4.0.0-M13</version>-->
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -245,13 +198,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <!--          <archive>-->
-          <!--            <manifestEntries>-->
-          <!--              <Automatic-Module-Name>com.github.jinahya.spdx.license.list</Automatic-Module-Name>-->
-          <!--            </manifestEntries>-->
-          <!--          </archive>-->
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -295,6 +241,20 @@
                 </requireMavenVersion>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -368,7 +328,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.3.1</version>
+        <version>4.8.4.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -378,6 +338,31 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <additionalOptions>
+<!--            <additionalOption>-Xdoclint:${doclint}</additionalOption>-->
+          </additionalOptions>
+<!--          <source>${maven.compiler.release}</source>-->
+<!--          <release>${maven.compiler.testRelease}</release>-->
+          <tags>
+            <tag>
+              <name>apiNote</name>
+              <placement>a</placement>
+              <head>API Note:</head>
+            </tag>
+            <tag>
+              <name>implSpec</name>
+              <placement>a</placement>
+              <head>Implementation Requirements:</head>
+            </tag>
+            <tag>
+              <name>implNote</name>
+              <placement>a</placement>
+              <head>Implementation Note:</head>
+            </tag>
+          </tags>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -390,7 +375,7 @@
         <version>3.21.2</version>
         <configuration>
           <!-- Unsupported targetJdk value '21'. -->
-          <skip>true</skip>
+          <!--          <skip>true</skip>-->
         </configuration>
       </plugin>
       <plugin>
