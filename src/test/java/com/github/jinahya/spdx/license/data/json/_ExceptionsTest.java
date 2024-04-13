@@ -2,7 +2,7 @@ package com.github.jinahya.spdx.license.data.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jinahya.spdx.license.util.ObjectIoUtils;
+import com.github.jinahya.spdx.license.util.IoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -18,15 +18,15 @@ class _ExceptionsTest {
 
     @Test
     void __() throws IOException, ClassNotFoundException {
-        final var rootDirectory = Stream.concat(Stream.of(".", "src", "main", "resources"),
-                                                Arrays.stream(getClass().getPackageName().split("\\.")))
+        final var root = Stream.concat(Stream.of(".", "src", "main", "resources"),
+                                       Arrays.stream(getClass().getPackageName().split("\\.")))
                 .map(Path::of)
                 .reduce(Path::resolve)
                 .orElseThrow()
                 .toAbsolutePath()
                 .normalize();
-        log.debug("d: {}", rootDirectory);
-        rootDirectory.toFile().mkdirs();
+        log.debug("d: {}", root);
+        root.toFile().mkdirs();
         // -------------------------------------------------------------------------------------------------------------
         final var mapper = new ObjectMapper().findAndRegisterModules();
         // https://stackoverflow.com/a/7108530/330457
@@ -45,28 +45,45 @@ class _ExceptionsTest {
                         .isNotNull();
                 exceptions = mapper.reader().readValue(resource, _Exceptions.class);
                 {
-                    final var file = rootDirectory.resolve(_Exceptions.RESOURCE_NAME).toFile();
-                    ObjectIoUtils.write(file, exceptions);
+                    final var file = root.resolve(_Exceptions.EXCEPTIONS_RESOURCE_NAME).toFile();
+                    IoUtils.write(file, exceptions);
                 }
             }
             final var instance = _Exceptions.getInstance();
-            instance.getExceptions().forEach((k, v) -> {
-                assertThat(instance.getException(k)).isSameAs(v);
+            instance.getExceptions(false).forEach((exceptionLicenseId, v) -> {
+                assertThat(instance.getException(exceptionLicenseId, false)).isSameAs(v);
             });
         }
         // ---------------------------------------------------------------------------------------------------------
-        final var detailsDirectory = rootDirectory.resolve("exceptions");
-        detailsDirectory.toFile().mkdirs();
-        for (final var entry : exceptions.getExceptions().entrySet()) {
-            final var name = "/json/exceptions/" + entry.getKey() + ".json";
-            try (var resource = getClass().getResourceAsStream(name)) {
-                assertThat(resource)
-                        .as("detail resource for '%1$s'", name)
-                        .isNotNull();
-                final var exception = mapper.reader().readValue(resource, _Exception.class);
-                final var file = detailsDirectory.resolve(exception.getLicenseExceptionId() + ".bin").toFile();
-                ObjectIoUtils.write(file, exception);
-                assertThat((_Exception) ObjectIoUtils.read(file)).isEqualTo(exception);
+        {
+            final var details = root.resolve("exceptions");
+            details.toFile().mkdirs();
+            for (final var entry : exceptions.getExceptions(false).entrySet()) {
+                final var name = "/json/exceptions/" + entry.getKey() + ".json";
+                try (var resource = getClass().getResourceAsStream(name)) {
+                    assertThat(resource)
+                            .as("detail resource for '%1$s'", name)
+                            .isNotNull();
+                    final var exception = mapper.reader().readValue(resource, _Exception.class);
+                    final var file = details.resolve(exception.getLicenseExceptionId() + ".bin").toFile();
+                    IoUtils.write(file, exception);
+                    assertThat((_Exception) IoUtils.read(file)).isEqualTo(exception);
+                }
+            }
+            // -------------------------------------------------------------------------------------------------------------
+            {
+                final var instance = _Exceptions.getInstance();
+                final var simple = instance.getExceptions(false);
+                for (var entry : simple.entrySet()) {
+                    final var exception = instance.getException(entry.getKey(), false);
+                    assertThat(exception).isNotNull();
+                }
+                final var detail = instance.getExceptions(true);
+                assertThat(detail).hasSize(simple.size());
+                for (var entry : detail.entrySet()) {
+                    final var license = instance.getException(entry.getKey(), true);
+                    assertThat(license).isNotNull();
+                }
             }
         }
     }
