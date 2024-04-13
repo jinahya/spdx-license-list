@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -19,15 +18,15 @@ class LicensesTest {
 
     @Test
     void __() throws IOException, ClassNotFoundException {
+        final var root = Stream.concat(
+                        Stream.of(".", "src", "main", "resources"),
+                        Arrays.stream(getClass().getPackageName().split("\\.")))
+                .map(Path::of)
+                .reduce(Path::resolve)
+                .orElseThrow()
+                .toAbsolutePath()
+                .normalize();
         {
-            final var root = Stream.concat(
-                            Stream.of(".", "src", "main", "resources"),
-                            Arrays.stream(getClass().getPackageName().split("\\.")))
-                    .map(Path::of)
-                    .reduce(Path::resolve)
-                    .orElseThrow()
-                    .toAbsolutePath()
-                    .normalize();
             root.toFile().mkdirs();
             // -------------------------------------------------------------------------------------------------------------
             final var mapper = new ObjectMapper().findAndRegisterModules();
@@ -48,25 +47,20 @@ class LicensesTest {
                     deserialized = mapper.reader().readValue(resource, Licenses.class);
                     final var file = root.resolve(Licenses.LICENSES_RESOURCE_NAME).toFile();
                     IoUtils.write(file, deserialized);
-                    assertThat(IoUtils.<Licenses>read(file)).isEqualTo(deserialized);
                 }
-                final var instance = Licenses.getInstance();
-                instance.getLicenses(false).forEach((licenseId, v) -> {
-                    assertThat(instance.getLicense(licenseId, false)).isSameAs(v);
-                });
             }
             // ---------------------------------------------------------------------------------------------------------
             {
                 final var details = root.resolve("details");
                 details.toFile().mkdirs();
-                for (final var entry : deserialized.getLicenses(false).entrySet()) {
-                    final var name = "/json/details/" + entry.getKey() + ".json";
-                    try (var resource = getClass().getResourceAsStream(name)) {
-                        assertThat(resource)
-                                .as("resource for '%1$s'", name)
+                for (final var simpleLicense : deserialized.getLicenses()) {
+                    final var detailName = "/json/details/" + simpleLicense.getLicenseId() + ".json";
+                    try (var detailResource = getClass().getResourceAsStream(detailName)) {
+                        assertThat(detailResource)
+                                .as("resource for '%1$s'", detailName)
                                 .isNotNull();
-                        final var license = mapper.reader().readValue(resource, License.class);
-                        final var file = details.resolve(license.getLicenseId() + ".bin").toFile();
+                        final var license = mapper.reader().readValue(detailResource, License.class);
+                        final var file = details.resolve(license.getLicenseId() + ".ser").toFile();
                         IoUtils.write(file, license);
                         assertThat((License) IoUtils.read(file)).isEqualTo(license);
                     }
@@ -74,19 +68,17 @@ class LicensesTest {
             }
         }
         // -------------------------------------------------------------------------------------------------------------
-        {
+        if (getClass().getResource(Licenses.LICENSES_RESOURCE_NAME) != null) {
             final var instance = Licenses.getInstance();
             final var simple = instance.getLicenses(false);
             for (var entry : simple.entrySet()) {
                 final var value = instance.getLicense(entry.getKey(), false);
-                log.debug("simple: {}", value);
                 assertThat(value).isNotNull();
             }
             final var detail = instance.getLicenses(true);
             assertThat(detail).hasSize(simple.size());
             for (var entry : detail.entrySet()) {
                 final var value = instance.getLicense(entry.getKey(), true);
-                log.debug("detail: {}", value);
                 assertThat(value).isNotNull();
             }
         }

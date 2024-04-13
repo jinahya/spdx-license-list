@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +24,7 @@ public final class _Exceptions
     private static final long serialVersionUID = -7925674913511699783L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final String EXCEPTIONS_RESOURCE_NAME = "exceptions.bin";
+    static final String EXCEPTIONS_RESOURCE_NAME = "exceptions.ser";
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final class InstanceHolder {
@@ -36,13 +37,13 @@ public final class _Exceptions
             try {
                 INSTANCE = IoUtils.read(new File(resource.toURI()));
             } catch (final Exception e) {
-                throw new RuntimeException("failed to load resource", e);
+                throw new ExceptionInInitializerError("failed to initialize: " + e.getMessage());
             }
         }
     }
 
     static String exceptionResourceName(final String exeptionLicenseId) {
-        return "exceptions/" + exeptionLicenseId + ".bin";
+        return "exceptions/" + exeptionLicenseId + ".ser";
     }
 
     private static _Exception detail(final String exceptionLicenseId) {
@@ -71,12 +72,8 @@ public final class _Exceptions
     }
 
     private void map() {
-        simple = exceptions.stream()
+        simple = getExceptions().stream()
                 .collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
-        detail = simple.keySet().stream()
-                .map(_Exceptions::detail)
-                .collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
-
     }
 
     // ---------------------------------------------------------------------------------------------- licenseListVersion
@@ -86,11 +83,24 @@ public final class _Exceptions
     }
 
     // -------------------------------------------------------------------------------------------------------- licenses
+
+    List<_Exception> getExceptions() {
+        if (exceptions == null) {
+            exceptions = new ArrayList<>();
+        }
+        return exceptions;
+    }
+
     public Map<String, _Exception> getExceptions(final boolean detailed) {
         if (simple == null) {
             map();
         }
         if (detailed) {
+            if (detail == null) {
+                detail = simple.keySet().stream()
+                        .map(_Exceptions::detail)
+                        .collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+            }
             return detail;
         }
         return simple;

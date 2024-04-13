@@ -23,7 +23,7 @@ public final class Licenses
     private static final long serialVersionUID = 1668175366953366612L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final String LICENSES_RESOURCE_NAME = "licenses.bin";
+    static final String LICENSES_RESOURCE_NAME = "licenses.ser";
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final class InstanceHolder {
@@ -32,23 +32,23 @@ public final class Licenses
 
         static {
             final var resource = Licenses.class.getResource(LICENSES_RESOURCE_NAME);
-            assert resource != null;
+            assert resource != null : "no resource for '" + LICENSES_RESOURCE_NAME + "'";
             try {
                 INSTANCE = IoUtils.read(new File(resource.toURI()));
             } catch (final Exception e) {
-                throw new InstantiationError("failed to load from `" + LICENSES_RESOURCE_NAME + "'");
+                throw new ExceptionInInitializerError("failed to initialize: " + e.getMessage());
             }
         }
     }
 
     static String detailResourceName(final String licenseId) {
-        return "details/" + licenseId + ".bin";
+        return "details/" + licenseId + ".ser";
     }
 
     private static License detail(final String licenseId) {
         final var name = detailResourceName(licenseId);
         final var resource = Licenses.class.getResource(name);
-        assert resource != null;
+        assert resource != null : "no resource for '" + name + "'";
         try {
             return IoUtils.read(new File(resource.toURI()));
         } catch (final Exception e) {
@@ -85,14 +85,11 @@ public final class Licenses
         map();
     }
 
-    private void map() {
+    void map() {
         if (licenses == null) {
             licenses = new ArrayList<>();
         }
-        simple = licenses.stream()
-                .collect(Collectors.toMap(License::getLicenseId, Function.identity()));
-        detail = simple.keySet().stream()
-                .map(Licenses::detail)
+        simple = getLicenses().stream()
                 .collect(Collectors.toMap(License::getLicenseId, Function.identity()));
     }
 
@@ -108,6 +105,12 @@ public final class Licenses
     }
 
     // -------------------------------------------------------------------------------------------------------- licenses
+    List<License> getLicenses() {
+        if (licenses == null) {
+            licenses = new ArrayList<>();
+        }
+        return licenses;
+    }
 
     /**
      * Returns an unmodifiable map of license-ids and licenses.
@@ -119,6 +122,14 @@ public final class Licenses
         if (simple == null) {
             map();
         }
+        if (detailed) {
+            if (detail == null) {
+                detail = simple.keySet().stream()
+                        .map(Licenses::detail)
+                        .collect(Collectors.toMap(License::getLicenseId, Function.identity()));
+            }
+            return detail;
+        }
         return simple;
     }
 
@@ -126,7 +137,7 @@ public final class Licenses
      * Returns the license associated with specified license-id.
      *
      * @param licenseId the license-id.
-     * @param detailed    a flag for resulting detailed instance.
+     * @param detailed  a flag for resulting detailed instance.
      * @return the license associated with {@code licenseId}; {@code null} when no license matches.
      */
     public License getLicense(final String licenseId, final boolean detailed) {

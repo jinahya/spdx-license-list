@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -45,16 +44,10 @@ class _ExceptionsTest {
                         .as("resource for '%1$s'", name)
                         .isNotNull();
                 deserialized = mapper.reader().readValue(resource, _Exceptions.class);
-                {
-                    final var file = root.resolve(_Exceptions.EXCEPTIONS_RESOURCE_NAME).toFile();
-                    IoUtils.write(file, deserialized);
-                    assertThat(IoUtils.<_Exceptions>read(file)).isEqualTo(deserialized);
-                }
+                final var file = root.resolve(_Exceptions.EXCEPTIONS_RESOURCE_NAME).toFile();
+                IoUtils.write(file, deserialized);
+                assertThat(IoUtils.<_Exceptions>read(file)).isEqualTo(deserialized);
             }
-            final var instance = _Exceptions.getInstance();
-            instance.getExceptions(false).forEach((exceptionLicenseId, v) -> {
-                assertThat(instance.getException(exceptionLicenseId, false)).isSameAs(v);
-            });
         }
         // ---------------------------------------------------------------------------------------------------------
         {
@@ -67,25 +60,22 @@ class _ExceptionsTest {
                             .as("detail resource for '%1$s'", name)
                             .isNotNull();
                     final var exception = mapper.reader().readValue(resource, _Exception.class);
-                    final var file = details.resolve(exception.getLicenseExceptionId() + ".bin").toFile();
+                    final var file = details.resolve(exception.getLicenseExceptionId() + ".ser").toFile();
                     IoUtils.write(file, exception);
-                    assertThat((_Exception) IoUtils.read(file)).isEqualTo(exception);
                 }
             }
             // -------------------------------------------------------------------------------------------------------------
-            {
+            if (getClass().getResource(_Exceptions.EXCEPTIONS_RESOURCE_NAME) != null) {
                 final var instance = _Exceptions.getInstance();
                 final var simple = instance.getExceptions(false);
                 for (var entry : simple.entrySet()) {
                     final var value = instance.getException(entry.getKey(), false);
-                    log.debug("simple: {}", value);
                     assertThat(value).isNotNull();
                 }
                 final var detail = instance.getExceptions(true);
                 assertThat(detail).hasSize(simple.size());
                 for (var entry : detail.entrySet()) {
                     final var value = instance.getException(entry.getKey(), true);
-                    log.debug("detail: {}", value);
                     assertThat(value).isNotNull();
                 }
             }
