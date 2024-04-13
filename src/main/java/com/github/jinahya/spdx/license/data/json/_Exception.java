@@ -27,7 +27,7 @@ public class _Exception
         return reference;
     }
 
-    public Boolean getDeprecatedLicenseId() {
+    public Boolean getIsDeprecatedLicenseId() {
         return isDeprecatedLicenseId;
     }
 

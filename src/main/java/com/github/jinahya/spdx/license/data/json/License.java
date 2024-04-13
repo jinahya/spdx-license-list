@@ -40,11 +40,11 @@ public class License
             return url;
         }
 
-        public Boolean getValid() {
+        public Boolean getIsValid() {
             return isValid;
         }
 
-        public Boolean getLive() {
+        public Boolean getIsLive() {
             return isLive;
         }
 
@@ -52,7 +52,7 @@ public class License
             return timestamp;
         }
 
-        public Boolean getWayBackLink() {
+        public Boolean getIsWayBackLink() {
             return isWayBackLink;
         }
 
@@ -87,7 +87,7 @@ public class License
         return reference;
     }
 
-    public Boolean getDeprecatedLicenseId() {
+    public Boolean getIsDeprecatedLicenseId() {
         return isDeprecatedLicenseId;
     }
 
@@ -113,18 +113,22 @@ public class License
                 .orElse(null);
     }
 
-    public Boolean getOsiApproved() {
+    // ---------------------------------------------------------------------------------------------------------- isOsiApproved
+    public Boolean getIsOsiApproved() {
         return isOsiApproved;
     }
 
+    // ----------------------------------------------------------------------------------------------------- licenseText
     public String getLicenseText() {
         return licenseText;
     }
 
+    // -------------------------------------------------------------------------------------------------------- crossRef
+
     /**
-     * Returns the value of {@code $.crossRef}.
+     * Returns an <em>unmodifiable</em> list of instances mapped from {@code $.crossRef}.
      *
-     * @return the value of {@code $.crossRef}.
+     * @return an <em>unmodifiable</em> list of instances mapped from {@code $.crossRef}.
      */
     public List<CrossRef> getCrossRef() {
         return Optional.ofNullable(crossRef)
@@ -132,16 +136,18 @@ public class License
                 .orElse(null);
     }
 
+    // ------------------------------------------------------------------------------------------------- licenseTextHtml
+
     /**
-     * Returns the value of {@code $.licenseTextHtml}.
+     * Returns the instance mapped from {@code $.licenseTextHtml}.
      *
-     * @return the value of {@code $.licenseTextHtml}.
+     * @return the instance mapped from {@code $.licenseTextHtml}.
      */
     public String getLicenseTextHtml() {
         return licenseTextHtml;
     }
 
-    public Boolean getFsfLibre() {
+    public Boolean getIsFsfLibre() {
         return isFsfLibre;
     }
 
