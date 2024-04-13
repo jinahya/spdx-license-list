@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -36,17 +37,18 @@ class _ExceptionsTest {
                                      .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                                      .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
         // -------------------------------------------------------------------------------------------------------------
-        final _Exceptions exceptions;
+        final _Exceptions deserialized;
         {
             final var name = "/json/exceptions.json";
             try (var resource = getClass().getResourceAsStream(name)) {
                 assertThat(resource)
                         .as("resource for '%1$s'", name)
                         .isNotNull();
-                exceptions = mapper.reader().readValue(resource, _Exceptions.class);
+                deserialized = mapper.reader().readValue(resource, _Exceptions.class);
                 {
                     final var file = root.resolve(_Exceptions.EXCEPTIONS_RESOURCE_NAME).toFile();
-                    IoUtils.write(file, exceptions);
+                    IoUtils.write(file, deserialized);
+                    assertThat(IoUtils.<_Exceptions>read(file)).isEqualTo(deserialized);
                 }
             }
             final var instance = _Exceptions.getInstance();
@@ -58,7 +60,7 @@ class _ExceptionsTest {
         {
             final var details = root.resolve("exceptions");
             details.toFile().mkdirs();
-            for (final var entry : exceptions.getExceptions(false).entrySet()) {
+            for (final var entry : deserialized.getExceptions(false).entrySet()) {
                 final var name = "/json/exceptions/" + entry.getKey() + ".json";
                 try (var resource = getClass().getResourceAsStream(name)) {
                     assertThat(resource)
@@ -75,14 +77,16 @@ class _ExceptionsTest {
                 final var instance = _Exceptions.getInstance();
                 final var simple = instance.getExceptions(false);
                 for (var entry : simple.entrySet()) {
-                    final var exception = instance.getException(entry.getKey(), false);
-                    assertThat(exception).isNotNull();
+                    final var value = instance.getException(entry.getKey(), false);
+                    log.debug("simple: {}", value);
+                    assertThat(value).isNotNull();
                 }
                 final var detail = instance.getExceptions(true);
                 assertThat(detail).hasSize(simple.size());
                 for (var entry : detail.entrySet()) {
-                    final var license = instance.getException(entry.getKey(), true);
-                    assertThat(license).isNotNull();
+                    final var value = instance.getException(entry.getKey(), true);
+                    log.debug("detail: {}", value);
+                    assertThat(value).isNotNull();
                 }
             }
         }

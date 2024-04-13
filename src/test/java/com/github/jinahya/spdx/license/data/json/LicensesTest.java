@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -37,16 +38,17 @@ class LicensesTest {
                                          .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                                          .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
             // -------------------------------------------------------------------------------------------------------------
-            final Licenses licenses;
+            final Licenses deserialized;
             {
                 final var name = "/json/licenses.json";
                 try (var resource = getClass().getResourceAsStream(name)) {
                     assertThat(resource)
                             .as("resource for '%1$s'", name)
                             .isNotNull();
-                    licenses = mapper.reader().readValue(resource, Licenses.class);
+                    deserialized = mapper.reader().readValue(resource, Licenses.class);
                     final var file = root.resolve(Licenses.LICENSES_RESOURCE_NAME).toFile();
-                    IoUtils.write(file, licenses);
+                    IoUtils.write(file, deserialized);
+                    assertThat(IoUtils.<Licenses>read(file)).isEqualTo(deserialized);
                 }
                 final var instance = Licenses.getInstance();
                 instance.getLicenses(false).forEach((licenseId, v) -> {
@@ -57,7 +59,7 @@ class LicensesTest {
             {
                 final var details = root.resolve("details");
                 details.toFile().mkdirs();
-                for (final var entry : licenses.getLicenses(false).entrySet()) {
+                for (final var entry : deserialized.getLicenses(false).entrySet()) {
                     final var name = "/json/details/" + entry.getKey() + ".json";
                     try (var resource = getClass().getResourceAsStream(name)) {
                         assertThat(resource)
@@ -76,14 +78,16 @@ class LicensesTest {
             final var instance = Licenses.getInstance();
             final var simple = instance.getLicenses(false);
             for (var entry : simple.entrySet()) {
-                final var license = instance.getLicense(entry.getKey(), false);
-                assertThat(license).isNotNull();
+                final var value = instance.getLicense(entry.getKey(), false);
+                log.debug("simple: {}", value);
+                assertThat(value).isNotNull();
             }
             final var detail = instance.getLicenses(true);
             assertThat(detail).hasSize(simple.size());
             for (var entry : detail.entrySet()) {
-                final var license = instance.getLicense(entry.getKey(), true);
-                assertThat(license).isNotNull();
+                final var value = instance.getLicense(entry.getKey(), true);
+                log.debug("detail: {}", value);
+                assertThat(value).isNotNull();
             }
         }
     }

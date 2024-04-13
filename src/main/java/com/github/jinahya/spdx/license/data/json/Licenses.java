@@ -112,10 +112,10 @@ public final class Licenses
     /**
      * Returns an unmodifiable map of license-ids and licenses.
      *
-     * @param detail a flag for resulting detailed instances.
+     * @param detailed a flag for resulting detailed instances.
      * @return an unmodifiable map of license-ids and licenses.
      */
-    public Map<String, License> getLicenses(final boolean detail) {
+    public Map<String, License> getLicenses(final boolean detailed) {
         if (simple == null) {
             map();
         }
@@ -126,12 +126,12 @@ public final class Licenses
      * Returns the license associated with specified license-id.
      *
      * @param licenseId the license-id.
-     * @param detail    a flag for resulting detailed instance.
+     * @param detailed    a flag for resulting detailed instance.
      * @return the license associated with {@code licenseId}; {@code null} when no license matches.
      */
-    public License getLicense(final String licenseId, final boolean detail) {
+    public License getLicense(final String licenseId, final boolean detailed) {
         Objects.requireNonNull(licenseId, "licenseId is null");
-        return getLicenses(detail).get(licenseId);
+        return getLicenses(detailed).get(licenseId);
     }
 
     // ----------------------------------------------------------------------------------------------------- releaseDate
