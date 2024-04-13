@@ -1,5 +1,6 @@
 /**
- * Bound instances of <a href="https://github.com/spdx/license-list-data">SPDX License List Data</a>.
+ * Binds <a href="https://github.com/spdx/license-list-data/tree/main/json">SPDX License List Data formatted in
+ * JSON</a>.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

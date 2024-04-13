@@ -82,6 +82,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <!-- https://search.maven.org/artifact/com.apicatalog/titanium-json-ld-jre8 -->
+      <!-- https://search.maven.org/artifact/com.apicatalog/titanium-json-ld -->
+      <groupId>com.apicatalog</groupId>
+      <artifactId>titanium-json-ld</artifactId>
+      <version>1.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <scope>test</scope>
@@ -89,6 +97,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jsonld-java</groupId>
+      <artifactId>jsonld-java</artifactId>
+      <version>0.13.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -102,9 +116,20 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.25.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.parsson</groupId>
+      <artifactId>parsson</artifactId>
+      <version>1.1.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -179,6 +204,32 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>generate-license-list-jsonld</id>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <target>
+                <fileset id="license.jsonld.fileset" dir="${project.basedir}/src/test/resources-spdx-license-data/jsonld"
+                         includes="*.jsonld"/>
+                <pathconvert pathsep="${line.separator}" property="license.jsonld.fileset.property" refid="license.jsonld.fileset">
+                  <!-- https://stackoverflow.com/a/1456898/330457 -->
+                  <mapper>
+                    <flattenmapper/>
+                  </mapper>
+                </pathconvert>
+                <echo file="${project.basedir}/src/test/resources/com/github/jinahya/spdx/license/data/jsonld/index.txt">${license.jsonld.fileset.property}</echo>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -286,11 +337,29 @@
                   <directory>${project.basedir}/src/test/resources-spdx-license-data</directory>
                   <includes>
                     <include>json/**</include>
+                    <include>jsonld/**</include>
                   </includes>
                 </resource>
               </resources>
             </configuration>
           </execution>
+<!--          <execution>-->
+<!--            <id>add-test-resource-data-jsonld</id>-->
+<!--            <phase>generate-test-resources</phase> &lt;!&ndash; default &ndash;&gt;-->
+<!--            <goals>-->
+<!--              <goal>add-test-resource</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <resources>-->
+<!--                <resource>-->
+<!--                  <directory>${project.basedir}/src/test/resources-spdx-license-data</directory>-->
+<!--                  <includes>-->
+<!--                    <include>jsonld/**</include>-->
+<!--                  </includes>-->
+<!--                </resource>-->
+<!--              </resources>-->
+<!--            </configuration>-->
+<!--          </execution>-->
         </executions>
       </plugin>
       <plugin>
