@@ -1,6 +1,6 @@
 package com.github.jinahya.spdx.license.data.json;
 
-import com.github.jinahya.spdx.license.util.ObjectIoUtils;
+import com.github.jinahya.spdx.license.util.IoUtils;
 import lombok.*;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public final class _Exceptions
     private static final long serialVersionUID = -7925674913511699783L;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final String NAME = "exceptions.bin";
+    static final String EXCEPTIONS_RESOURCE_NAME = "exceptions.bin";
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final class InstanceHolder {
@@ -31,15 +31,32 @@ public final class _Exceptions
         private static final _Exceptions INSTANCE;
 
         static {
-            final var resource = _Exceptions.class.getResource(NAME);
+            final var resource = _Exceptions.class.getResource(EXCEPTIONS_RESOURCE_NAME);
             assert resource != null;
             try {
-                INSTANCE = ObjectIoUtils.read(new File(resource.toURI()));
+                INSTANCE = IoUtils.read(new File(resource.toURI()));
             } catch (final Exception e) {
                 throw new RuntimeException("failed to load resource", e);
             }
         }
     }
+
+    static String exceptionResourceName(final String exeptionLicenseId) {
+        return "exceptions/" + exeptionLicenseId + ".bin";
+    }
+
+    private static _Exception detail(final String exceptionLicenseId) {
+        final var name = exceptionResourceName(exceptionLicenseId);
+        final var resource = _Exceptions.class.getResource(name);
+        assert resource != null;
+        try {
+            return IoUtils.read(new File(resource.toURI()));
+        } catch (final Exception e) {
+            throw new InstantiationError("failed to load from `" + name + "'");
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static _Exceptions getInstance() {
         return InstanceHolder.INSTANCE;
@@ -53,21 +70,40 @@ public final class _Exceptions
         map();
     }
 
-    // -------------------------------------------------------------------------------------------------------- licenses
     private void map() {
-        map = exceptions.stream().collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+        simple = exceptions.stream()
+                .collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+        detail = simple.keySet().stream()
+                .map(_Exceptions::detail)
+                .collect(Collectors.toMap(_Exception::getLicenseExceptionId, Function.identity()));
+
     }
 
-    public Map<String, _Exception> getExceptions() {
-        if (map == null) {
+    // ---------------------------------------------------------------------------------------------- licenseListVersion
+
+    public String getLicenseListVersion() {
+        return licenseListVersion;
+    }
+
+    // -------------------------------------------------------------------------------------------------------- licenses
+    public Map<String, _Exception> getExceptions(final boolean detailed) {
+        if (simple == null) {
             map();
         }
-        return map;
+        if (detailed) {
+            return detail;
+        }
+        return simple;
     }
 
-    public _Exception getException(final String id) {
-        Objects.requireNonNull(id, "id is null");
-        return getExceptions().get(id);
+    public _Exception getException(final String licenseExceptionId, final boolean detailed) {
+        Objects.requireNonNull(licenseExceptionId, "licenseExceptionId is null");
+        return getExceptions(detailed).get(licenseExceptionId);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public LocalDate getReleaseDate() {
+        return releaseDate;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -89,5 +125,11 @@ public final class _Exceptions
     @ToString.Exclude
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private transient Map<String, _Exception> map;
+    private transient Map<String, _Exception> simple;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private transient Map<String, _Exception> detail;
 }
