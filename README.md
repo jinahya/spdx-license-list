@@ -1,4 +1,4 @@
-# SPDX License List
+# SPDX Licenses
 
 [![Java CI with Maven](https://github.com/jinahya/spdx-licenses/actions/workflows/maven.yml/badge.svg)](https://github.com/jinahya/spdx-licenses/actions/workflows/maven.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jinahya_spdx-licenses&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jinahya_spdx-licenses)
