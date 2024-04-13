@@ -1,5 +1,7 @@
 # SPDX License List
 
+[![Java CI with Maven](https://github.com/jinahya/spdx-licenses/actions/workflows/maven.yml/badge.svg)](https://github.com/jinahya/spdx-licenses/actions/workflows/maven.yml)
+
 Bound instances of [SPDX License List Data](https://github.com/spdx/license-list-data).
 
 ## JSON
